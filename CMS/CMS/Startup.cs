@@ -47,8 +47,6 @@ namespace CMS
 
             app.UseCors("AllowAll");
 
-            app.UseHttpsRedirection();
-
             app.UseRouting();
 
             app.UseAuthorization();
