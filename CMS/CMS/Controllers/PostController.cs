@@ -28,6 +28,14 @@ namespace CMS.Controllers
             return BadRequest(rs.ErrorMessage);
         }
 
+        [HttpGet]
+        public IActionResult GetAll(int? pageIndex, int? pageSize)
+        {
+            var rs = _postService.GetAll(pageIndex.Value, pageSize.Value);
+            if (rs.Succeed) return Ok(rs.Data);
+            return BadRequest(rs.ErrorMessage);
+        }
+
         [HttpPost]
         public IActionResult Add(PostAddModel model)
         {

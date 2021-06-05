@@ -5,6 +5,7 @@ using Data.ViewModels;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Tag = Data.MongoCollections.Tag;
 
@@ -12,6 +13,7 @@ namespace Services.Core
 {
     public interface IPostService
     {
+        ResultModel GetAll(int pageIndex, int pageSize);
         ResultModel Get(Guid id);
         ResultModel Add(PostAddModel model);
         ResultModel AddPartToPost(AddPartToPostModel model);
@@ -29,6 +31,30 @@ namespace Services.Core
             _mapper = mapper;
         }
 
+        public ResultModel GetAll(int pageIndex, int pageSize)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var posts = _dbContext.Posts.Find(f => f.IsDeleted == false).ToList();
+
+                var data = new PagingModel()
+                {
+                    PageIndex = pageIndex,
+                    PageSize = pageSize,
+                    TotalSize = posts.Count,
+                    Data = _mapper.Map<List<Post>, List<PostViewModel>>(posts.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList())
+                };
+
+                result.Data = data;
+                result.Succeed = true;
+            }
+            catch (Exception e)
+            {
+                result.ErrorMessage = e.InnerException != null ? e.InnerException.Message : e.Message;
+            }
+            return result;
+        }
         public ResultModel Get(Guid id)
         {
             var result = new ResultModel();
@@ -52,12 +78,12 @@ namespace Services.Core
             try
             {
                 var post = _mapper.Map<PostAddModel, Post>(model);
-                
+
                 //Add tag
                 foreach (var item in model.Tags)
                 {
                     var tag = _dbContext.Tags.Find(f => f.Id == item).FirstOrDefault();
-                   
+
                     post.Tags.Add(tag);
                 }
 
@@ -151,7 +177,7 @@ namespace Services.Core
 
                 post.IsDeleted = true;
 
-                _dbContext.Posts.FindOneAndReplace(f => f.Id == post.Id,post);
+                _dbContext.Posts.FindOneAndReplace(f => f.Id == post.Id, post);
 
                 result.Data = post.Id;
                 result.Succeed = true;
