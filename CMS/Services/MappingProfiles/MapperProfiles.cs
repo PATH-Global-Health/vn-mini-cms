@@ -27,11 +27,14 @@ namespace Services.MappingProfiles
             CreateMap<PartUpdateModel, Part>().ForMember(f => f.Id, map => map.Ignore()).ReverseMap();
 
             //Post
-            CreateMap<Post, PostViewModel>()
+            //CreateMap<Post, PostViewModel>()
+            //    .ForMember(f => f.Categories, map => map.Ignore())
+            //    .ForMember(f => f.Tags, map => map.Ignore());
+            CreateMap<PostViewModel, Post>()
                 .ForMember(f => f.Categories, map => map.Ignore())
-                .ForMember(f => f.Tags, map => map.Ignore())
-                .ReverseMap();
-            CreateMap<PostAddModel, Post >()
+                .ForMember(f => f.Tags, map => map.Ignore());
+
+            CreateMap<PostAddModel, Post>()
                 .ForMember(f => f.Categories, map => map.Ignore())
                 .ForMember(f => f.Tags, map => map.Ignore())
                 .ReverseMap();
