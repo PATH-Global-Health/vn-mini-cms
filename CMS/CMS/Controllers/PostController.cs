@@ -29,7 +29,7 @@ namespace CMS.Controllers
         }
 
         [HttpGet]
-        public IActionResult GetAll(int? pageIndex, int? pageSize)
+        public IActionResult GetAll(int? pageIndex = 0, int? pageSize = 10)
         {
             var rs = _postService.GetAll(pageIndex.Value, pageSize.Value);
             if (rs.Succeed) return Ok(rs.Data);

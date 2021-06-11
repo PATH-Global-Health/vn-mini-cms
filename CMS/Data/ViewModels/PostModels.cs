@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Data.MongoCollections;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -31,8 +32,8 @@ namespace Data.ViewModels
         public string Name { get; set; }
         public DateTime PublishDate { get; set; }
         public string Writter { get; set; }
-        public List<Guid> Categories { get; set; }
-        public List<Guid> Tags { get; set; }
+        public List<Category> Categories { get; set; }
+        public List<Tag> Tags { get; set; }
     }
 
 }
