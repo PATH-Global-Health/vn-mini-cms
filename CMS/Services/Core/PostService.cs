@@ -141,6 +141,7 @@ namespace Services.Core
                 post.Writter = model.Writter;
                 post.Categories = new List<Category>();
                 post.Tags = new List<Tag>();
+                post.Description = model.Description;
 
                 //Update tag
                 foreach (var item in model.Tags)

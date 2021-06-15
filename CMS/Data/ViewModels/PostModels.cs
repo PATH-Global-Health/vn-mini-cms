@@ -17,6 +17,7 @@ namespace Data.ViewModels
 
     public class PostUpdateModel
     {
+        public string Description { get; set; }
         public string Name { get; set; }
         public DateTime PublishDate { get; set; }
         public string Writter { get; set; }
