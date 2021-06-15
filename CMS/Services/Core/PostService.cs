@@ -13,7 +13,7 @@ namespace Services.Core
 {
     public interface IPostService
     {
-        ResultModel GetAll(int pageIndex, int pageSize);
+        ResultModel GetAll(bool? orderByDescending, int pageIndex, int pageSize);
         ResultModel Get(Guid id);
         ResultModel Add(PostAddModel model);
         ResultModel AddPartToPost(AddPartToPostModel model);
@@ -31,13 +31,20 @@ namespace Services.Core
             _mapper = mapper;
         }
 
-        public ResultModel GetAll(int pageIndex, int pageSize)
+        public ResultModel GetAll(bool? orderByDescending, int pageIndex, int pageSize)
         {
             var result = new ResultModel();
             try
             {
                 var posts = _dbContext.Posts.Find(f => f.IsDeleted == false).ToList();
-
+                if (orderByDescending == true)
+                {
+                    posts = posts.OrderByDescending(o => o.DateCreated).ToList();
+                }
+                else if (orderByDescending == false)
+                {
+                    posts = posts.OrderBy(o => o.DateCreated).ToList();
+                }
                 var data = new PagingModel()
                 {
                     PageIndex = pageIndex,
