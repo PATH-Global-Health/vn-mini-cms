@@ -24,7 +24,12 @@ namespace Services.MappingProfiles
             //Part
             CreateMap<Part, PartViewModel>().ReverseMap();
             CreateMap<Part, PartAddModel>().ReverseMap();
-            CreateMap<PartUpdateModel, Part>().ForMember(f => f.Id, map => map.Ignore()).ReverseMap();
+            CreateMap<PartUpdateModel, Part>()
+                .ForMember(f => f.Id, map => map.Ignore())
+                .ForMember(f => f.DateCreated, map => map.Ignore())
+                .ForMember(f => f.DateUpdated, map => map.Ignore())
+                .ForMember(f => f.IsDeleted, map => map.Ignore())
+                .ReverseMap();
 
             //Post
             CreateMap<Post, PostViewModel>();

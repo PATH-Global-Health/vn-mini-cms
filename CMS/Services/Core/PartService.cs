@@ -61,7 +61,12 @@ namespace Services.Core
 
                 //Update part in post
                 post.Parts.Remove(currentPart);
-                currentPart = _mapper.Map<PartUpdateModel, Part>(model);
+                //currentPart = _mapper.Map<PartUpdateModel, Part>(model);
+                currentPart.DateUpdated = DateTime.Now;
+                currentPart.Content = model.Content;
+                currentPart.Order = model.Order;
+                currentPart.Type = model.Type;
+
                 post.Parts.Add(currentPart);
 
                 _dbContext.Posts.FindOneAndReplace(f => f.Id == post.Id, post);
