@@ -48,6 +48,18 @@ namespace Services.MappingProfiles
                 .ForMember(f => f.Categories, map => map.Ignore())
                 .ForMember(f => f.Tags, map => map.Ignore())
                 .ReverseMap();
+
+            //Question
+            CreateMap<QuestionAddModel, Question>()
+                .ForMember(f => f.Answers, map => map.Ignore())
+                .ReverseMap();
+
+            CreateMap<Question, QuestionViewModel>().ReverseMap();
+
+            //Answer
+            CreateMap<AnswerAddModel, Answer>()
+                //.ForMember(f => f.Answers, map => map.Ignore())
+                .ReverseMap();
         }
     }
 }

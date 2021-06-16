@@ -17,6 +17,8 @@ namespace CMS.Extensions
             services.AddScoped<ITagService, TagService>();
             services.AddScoped<IPostService, PostService>();
             services.AddScoped<IPartService, PartService>();
+            services.AddScoped<IQuestionService, QuestionService>();
+            services.AddScoped<IAnserService, AnserService>();
         }
 
         public static void ConfigCors(this IServiceCollection services)

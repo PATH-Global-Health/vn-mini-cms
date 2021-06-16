@@ -19,9 +19,13 @@ namespace Data.DataAccess
         }
 
         public IMongoCollection<Category> Categories => _db.GetCollection<Category>("categories");
-        //public IMongoCollection<Part> Parts => _db.GetCollection<Part>("parts");
         public IMongoCollection<Post> Posts => _db.GetCollection<Post>("posts");
         public IMongoCollection<MongoCollections.Tag> Tags => _db.GetCollection<MongoCollections.Tag>("tags");
+
+        //Survey
+        public IMongoCollection<QuestionTemplate> QuestionTemplates => _db.GetCollection<QuestionTemplate>("questionTemplates");
+        public IMongoCollection<Question> Questions => _db.GetCollection<Question>("questions");
+        public IMongoCollection<SurveySession> SurveySessions => _db.GetCollection<SurveySession>("surveySessions");
 
         public IClientSessionHandle StartSession()
         {
@@ -36,11 +40,6 @@ namespace Data.DataAccess
             {
                 _db.CreateCollection("categories");
             }
-
-            //if (!collectionNames.Any(name => name == "parts"))
-            //{
-            //    _db.CreateCollection("parts");
-            //}
             if (!collectionNames.Any(name => name == "posts"))
             {
                 _db.CreateCollection("posts");
@@ -48,6 +47,20 @@ namespace Data.DataAccess
             if (!collectionNames.Any(name => name == "tags"))
             {
                 _db.CreateCollection("tags");
+            }
+
+            //Survey parts
+            if (!collectionNames.Any(name => name == "questionTemplates"))
+            {
+                _db.CreateCollection("questionTemplates");
+            }
+            if (!collectionNames.Any(name => name == "questions"))
+            {
+                _db.CreateCollection("questions");
+            }
+            if (!collectionNames.Any(name => name == "surveySessions"))
+            {
+                _db.CreateCollection("surveySessions");
             }
         }
     }
