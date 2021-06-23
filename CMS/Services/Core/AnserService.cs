@@ -87,7 +87,7 @@ namespace Services.Core
                 var question = _dbContext.Questions.Find(f => f.Answers.Any(a => a.Id == id)).FirstOrDefault();
                 if (question == null)
                 {
-                    throw new Exception("Cant find any question with this answer!");
+                    throw new Exception("Cant find any question contains this answer!");
                 }
 
                 var answer = question.Answers.FirstOrDefault(f => f.Id == id);
@@ -122,7 +122,7 @@ namespace Services.Core
                 var question = _dbContext.Questions.Find(f => f.Answers.Any(a => a.Id == id)).FirstOrDefault();
                 if (question == null)
                 {
-                    throw new Exception("Cant find any question with this answer!");
+                    throw new Exception("Cant find any question contains this answer!");
                 }
 
                 var answer = question.Answers.FirstOrDefault(f => f.Id == id);

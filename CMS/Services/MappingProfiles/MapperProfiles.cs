@@ -56,10 +56,26 @@ namespace Services.MappingProfiles
 
             CreateMap<Question, QuestionViewModel>().ReverseMap();
 
+            //Question template
+            CreateMap<QuestionTemplateAddModel, QuestionTemplate>()
+                .ForMember(f => f.Questions, map => map.Ignore())
+                .ForMember(f => f.SurveyResults, map => map.Ignore());
+
+            CreateMap<QuestionTemplate, QuestionTemplateViewModel>();
+
+            //Survey result
+            CreateMap<SurveyResultAddModel, SurveyResult>().ReverseMap();
+            CreateMap<SurveyResult, SurveyResultViewModel>().ReverseMap();
+
             //Answer
             CreateMap<AnswerAddModel, Answer>()
                 //.ForMember(f => f.Answers, map => map.Ignore())
                 .ReverseMap();
+
+            //Survey session
+            CreateMap<SurveySession, SurveySessionViewModel>();
+            CreateMap<SurveySessionAddModel, SurveySession>()
+                .ForMember(f => f.SurveySessionResults, map => map.Ignore());
         }
     }
 }

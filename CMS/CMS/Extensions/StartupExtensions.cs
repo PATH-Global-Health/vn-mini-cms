@@ -19,6 +19,10 @@ namespace CMS.Extensions
             services.AddScoped<IPartService, PartService>();
             services.AddScoped<IQuestionService, QuestionService>();
             services.AddScoped<IAnserService, AnserService>();
+            services.AddScoped<IFileService, FileService>();
+            services.AddScoped<IQuestionTemplateService, QuestionTemplateService>();
+            services.AddScoped<ISurveyResultService, SurveyResultService>();
+            services.AddScoped<ISurveySessionService, SurveySessionService>();
         }
 
         public static void ConfigCors(this IServiceCollection services)

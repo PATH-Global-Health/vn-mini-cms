@@ -9,6 +9,7 @@ namespace Data.MongoCollections
     {
         [BsonId]
         public Guid Id { get; set; } = Guid.NewGuid();
+        public Guid QuestionTemplateId { get; set; }
         public string UserId { get; set; }
         public DateTime DateCreated { get; set; }
         public string Result { get; set; }
@@ -17,7 +18,7 @@ namespace Data.MongoCollections
 
     public class SurveySessionResult
     {
-        public Guid QuestionId { get; set; }
-        public List<Guid> AnswerId { get; set; }
+        public Question Question { get; set; }
+        public Answer Answer { get; set; }
     }
 }

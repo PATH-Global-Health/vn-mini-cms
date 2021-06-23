@@ -5,6 +5,7 @@ using Data.ViewModels;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 
 namespace Services.Core
@@ -78,6 +79,7 @@ namespace Services.Core
                 question.IsMultipleChoice = model.IsMultipleChoice;
 
                 _dbContext.Questions.FindOneAndReplace(f => f.Id == question.Id, question);
+                UpdateAllReferences(question);
 
                 result.Data = question.Id;
                 result.Succeed = true;
@@ -111,6 +113,20 @@ namespace Services.Core
                 result.ErrorMessage = e.InnerException != null ? e.InnerException.Message : e.Message;
             }
             return result;
+        }
+
+        public void UpdateAllReferences(Question question)
+        {
+            var questionTemplates = _dbContext.QuestionTemplates.Find(f => f.Questions.Any(c => c.Id == question.Id)).ToList();
+            if (questionTemplates.Any())
+            {
+                foreach (var questionTemplate in questionTemplates)
+                {
+                    var reference = questionTemplate.Questions.FirstOrDefault(i => i.Id == questionTemplate.Id);
+                    reference = _mapper.Map(questionTemplate, reference);
+                    _dbContext.QuestionTemplates.FindOneAndReplace(i => i.Id == questionTemplate.Id, questionTemplate);
+                }
+            }
         }
     }
 }
