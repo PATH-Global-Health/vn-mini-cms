@@ -16,7 +16,7 @@ namespace Services.Core
         ResultModel Add(QuestionTemplateAddModel model);
         ResultModel Update(Guid id, QuestionTemplateUpdateModel model);
         ResultModel Delete(Guid id);
-
+        ResultModel Filter();
         ResultModel AddQuestion(QuestionTemplateQuestionModel model);
         ResultModel RemoveQuestion(QuestionTemplateQuestionModel model);
 
@@ -47,6 +47,29 @@ namespace Services.Core
                 }
 
                 result.Data = _mapper.Map<QuestionTemplate, QuestionTemplateViewModel>(questionTemplate);
+                result.Succeed = true;
+            }
+            catch (Exception e)
+            {
+                result.ErrorMessage = e.InnerException != null ? e.InnerException.Message : e.Message;
+            }
+            return result;
+        }
+        public ResultModel Filter()
+        {
+            var result = new ResultModel();
+            try
+            {
+                var questionTemplate = _dbContext.QuestionTemplates.Find(f => f.IsDeleted == false).ToList();
+
+                questionTemplate = questionTemplate.OrderByDescending(o => o.DateCreated).ToList();
+
+                if (questionTemplate == null)
+                {
+                    throw new Exception("Invalid id");
+                }
+
+                result.Data = _mapper.Map<List<QuestionTemplate>, List<QuestionTemplateViewModel>>(questionTemplate);
                 result.Succeed = true;
             }
             catch (Exception e)

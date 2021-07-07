@@ -29,6 +29,7 @@ namespace Data.ViewModels
     {
         public Guid Id { get; set; }
         public string Description { get; set; }
+        public string IsDeleted { get; set; }
         public DateTime DateCreated { get; set; } = DateTime.Now;
         public DateTime DateUpdated { get; set; } = DateTime.Now;
         public string Name { get; set; }

@@ -14,6 +14,7 @@ namespace Services.Core
     {
         ResultModel Get(Guid id);
         ResultModel Add(SurveySessionAddModel model);
+        ResultModel UserChecked(string userId, Guid templateId);
     }
     public class SurveySessionService : ISurveySessionService
     {
@@ -71,7 +72,38 @@ namespace Services.Core
 
                 _dbContext.SurveySessions.InsertOne(surveySession);
 
-                result.Data = surveySession.Id;
+                var questionTemplate = _dbContext.QuestionTemplates.Find(f => f.Id == model.QuestionTemplateId).FirstOrDefault();
+
+                List<Guid> answerIds = model.SurveySessionResults.Select(s => s.AnswerId).ToList();
+
+                double userScore = 0;
+                foreach (var question in questionTemplate.Questions)
+                {
+                    var ans = question.Answers.FirstOrDefault(f => answerIds.Contains(f.Id));
+                    userScore += ans.Score;
+                }
+
+                var data = new UserTestResult()
+                {
+                    UserScore = userScore,
+                    SurveyResult = _mapper.Map<SurveyResult, SurveyResultViewModel>(questionTemplate.SurveyResults.FirstOrDefault(f => userScore >= f.FromScore && userScore <= f.ToScore))
+                };
+
+                result.Data = data;
+                result.Succeed = true;
+            }
+            catch (Exception e)
+            {
+                result.ErrorMessage = e.InnerException != null ? e.InnerException.Message : e.Message;
+            }
+            return result;
+        }
+        public ResultModel UserChecked(string userId, Guid templateId)
+        {
+            var result = new ResultModel();
+            try
+            {
+                result.Data = _dbContext.SurveySessions.Find(f => f.UserId == userId && f.QuestionTemplateId == templateId).Any();
                 result.Succeed = true;
             }
             catch (Exception e)

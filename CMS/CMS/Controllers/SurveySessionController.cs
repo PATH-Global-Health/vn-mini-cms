@@ -35,5 +35,13 @@ namespace CMS.Controllers
             if (rs.Succeed) return Ok(rs.Data);
             return BadRequest(rs.ErrorMessage);
         }
+
+        [HttpGet("UserChecked/{userId}/{templateId}")]
+        public IActionResult UserChecked(string userId, Guid templateId)
+        {
+            var rs = _surveySessionService.UserChecked(userId, templateId);
+            if (rs.Succeed) return Ok(rs.Data);
+            return BadRequest(rs.ErrorMessage);
+        }
     }
 }

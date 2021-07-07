@@ -28,4 +28,11 @@ namespace Data.ViewModels
         public Guid QuestionId { get; set; }
         public Guid AnswerId { get; set; }
     }
+
+    public class UserTestResult
+    {
+        public double UserScore { get; set; }
+        //public double TotalScore { get; set; }
+        public SurveyResultViewModel SurveyResult { get; set; }
+    }
 }

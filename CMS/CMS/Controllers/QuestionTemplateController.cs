@@ -28,6 +28,14 @@ namespace CMS.Controllers
             return BadRequest(rs.ErrorMessage);
         }
 
+        [HttpGet("Filter")]
+        public IActionResult Filter()
+        {
+            var rs = _questionTemplateService.Filter();
+            if (rs.Succeed) return Ok(rs.Data);
+            return BadRequest(rs.ErrorMessage);
+        }
+
         [HttpPost]
         public IActionResult Add(QuestionTemplateAddModel model)
         {
