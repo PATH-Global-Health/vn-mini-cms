@@ -16,7 +16,7 @@ namespace Services.Core
         ResultModel Add(QuestionTemplateAddModel model);
         ResultModel Update(Guid id, QuestionTemplateUpdateModel model);
         ResultModel Delete(Guid id);
-        ResultModel Filter();
+        ResultModel Filter(string userId, int pageIndex, int pageSize);
         ResultModel AddQuestion(QuestionTemplateQuestionModel model);
         ResultModel RemoveQuestion(QuestionTemplateQuestionModel model);
 
@@ -55,7 +55,7 @@ namespace Services.Core
             }
             return result;
         }
-        public ResultModel Filter()
+        public ResultModel Filter(string userId, int pageIndex, int pageSize)
         {
             var result = new ResultModel();
             try
@@ -68,8 +68,31 @@ namespace Services.Core
                 {
                     throw new Exception("Invalid id");
                 }
+                var paging = questionTemplate.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
 
-                result.Data = _mapper.Map<List<QuestionTemplate>, List<QuestionTemplateViewModel>>(questionTemplate);
+                var data = new List<QuestionTemplateUserModel>();
+
+                foreach (var item in paging)
+                {
+                    var dataItem = _mapper.Map<QuestionTemplate, QuestionTemplateUserModel>(item);
+
+                    if (!string.IsNullOrEmpty(userId))
+                    {
+                        dataItem.IsCompleted = _dbContext.SurveySessions.Find(f => f.UserId == userId && f.QuestionTemplateId == item.Id).Any();
+                    }
+
+                    data.Add(dataItem);
+                }
+
+                var pagingData = new PagingModel()
+                {
+                    Data = data,
+                    PageIndex = pageIndex,
+                    PageSize = pageSize,
+                    TotalSize = questionTemplate.Count
+                };
+
+                result.Data = pagingData;
                 result.Succeed = true;
             }
             catch (Exception e)

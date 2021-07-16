@@ -62,6 +62,7 @@ namespace Services.MappingProfiles
                 .ForMember(f => f.SurveyResults, map => map.Ignore());
 
             CreateMap<QuestionTemplate, QuestionTemplateViewModel>();
+            CreateMap<QuestionTemplate, QuestionTemplateUserModel>().ForMember(f => f.IsCompleted, map => map.Ignore());
 
             //Survey result
             CreateMap<SurveyResultAddModel, SurveyResult>().ReverseMap();

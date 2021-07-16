@@ -63,6 +63,11 @@ namespace Data.MongoCollections
         public List<SurveyResultViewModel> SurveyResults { get; set; }
     }
 
+    public class QuestionTemplateUserModel: QuestionTemplateViewModel
+    {
+        public bool IsCompleted { get; set; }
+    }
+
     public class QuestionTemplateUpdateModel
     {
         public string Description { get; set; }
