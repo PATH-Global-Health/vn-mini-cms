@@ -31,7 +31,7 @@ namespace Services.Core
             var result = new ResultModel();
             try
             {
-                var questionTemplate = _dbContext.QuestionTemplates.Find(f => f.SurveyResults.Select(s => s.Id).Contains(id)).FirstOrDefault();
+                var questionTemplate = _dbContext.QuestionTemplates.Find(f => true).ToList().Where(f => f.SurveyResults.Select(s => s.Id).Contains(id)).FirstOrDefault();
 
                 if (questionTemplate == null)
                 {
