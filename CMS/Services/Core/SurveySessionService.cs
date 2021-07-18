@@ -15,6 +15,7 @@ namespace Services.Core
         ResultModel Get(Guid id);
         ResultModel Add(SurveySessionAddModel model);
         ResultModel UserChecked(string userId, Guid templateId);
+        ResultModel GetByUser(string id);
     }
     public class SurveySessionService : ISurveySessionService
     {
@@ -40,6 +41,27 @@ namespace Services.Core
                 }
 
                 result.Data = _mapper.Map<SurveySession, SurveySessionViewModel>(surveySession);
+                result.Succeed = true;
+            }
+            catch (Exception e)
+            {
+                result.ErrorMessage = e.InnerException != null ? e.InnerException.Message : e.Message;
+            }
+            return result;
+        }
+        public ResultModel GetByUser(string id)
+        {
+            var result = new ResultModel();
+            try
+            {
+                var surveySessions = _dbContext.SurveySessions.Find(f => f.UserId == id).ToList();
+
+                if (surveySessions == null)
+                {
+                    throw new Exception("Invalid id");
+                }
+
+                result.Data = _mapper.Map<List<SurveySession>, List<SurveySessionViewModel>>(surveySessions);
                 result.Succeed = true;
             }
             catch (Exception e)
@@ -103,7 +125,10 @@ namespace Services.Core
             var result = new ResultModel();
             try
             {
-                result.Data = _dbContext.SurveySessions.Find(f => f.UserId == userId && f.QuestionTemplateId == templateId).Any();
+                var data = _dbContext.SurveySessions.Find(f => f.UserId == userId && f.QuestionTemplateId == templateId).FirstOrDefault();
+
+                result.Data = _mapper.Map<SurveySession, SurveySessionViewModel>(data);
+
                 result.Succeed = true;
             }
             catch (Exception e)

@@ -43,5 +43,13 @@ namespace CMS.Controllers
             if (rs.Succeed) return Ok(rs.Data);
             return BadRequest(rs.ErrorMessage);
         }
+
+        [HttpGet("Hisories/{userId}")]
+        public IActionResult Hisories(string userId)
+        {
+            var rs = _surveySessionService.GetByUser(userId);
+            if (rs.Succeed) return Ok(rs.Data);
+            return BadRequest(rs.ErrorMessage);
+        }
     }
 }
