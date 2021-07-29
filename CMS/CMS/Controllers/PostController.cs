@@ -29,9 +29,9 @@ namespace CMS.Controllers
         }
 
         [HttpGet]
-        public IActionResult Filter([FromQuery] List<Guid> categories, [FromQuery] List<Guid> tags, bool? orderByCreatedDate, int? pageIndex = 0, int? pageSize = 10)
+        public IActionResult Filter(string searchText, [FromQuery] List<Guid> categories, [FromQuery] List<Guid> tags, bool? orderByCreatedDate, int? pageIndex = 0, int? pageSize = 10)
         {
-            var rs = _postService.Filter(categories, tags, orderByCreatedDate, pageIndex.Value, pageSize.Value);
+            var rs = _postService.Filter(searchText, categories, tags, orderByCreatedDate, pageIndex.Value, pageSize.Value);
             if (rs.Succeed) return Ok(rs.Data);
             return BadRequest(rs.ErrorMessage);
         }
