@@ -7,6 +7,7 @@ namespace Data.MongoCollections
 {
     public class QuestionTemplateAddModel
     {
+        public Guid QuestionTemplateTypeId { get; set; }
         public string Description { get; set; }
         public string Title { get; set; }
         public List<Guid> Questions { get; set; }
@@ -61,6 +62,7 @@ namespace Data.MongoCollections
         public string Title { get; set; }
         public List<QuestionViewModel> Questions { get; set; }
         public List<SurveyResultViewModel> SurveyResults { get; set; }
+        public Guid? QuestionTemplateTypeId { get; set; }
     }
 
     public class QuestionTemplateUserModel: QuestionTemplateViewModel
@@ -73,5 +75,6 @@ namespace Data.MongoCollections
         public string Description { get; set; }
         public string Title { get; set; }
         public List<Guid> Questions { get; set; }
+        public Guid QuestionTemplateTypeId { get; set; }
     }
 }

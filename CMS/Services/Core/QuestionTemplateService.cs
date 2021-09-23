@@ -114,6 +114,7 @@ namespace Services.Core
 
                 questionTemplate.Questions = questions;
                 questionTemplate.SurveyResults = surveyResults;
+                questionTemplate.QuestionTemplateTypeId = model.QuestionTemplateTypeId;
 
                 //Insert
                 _dbContext.QuestionTemplates.InsertOne(questionTemplate);
@@ -145,6 +146,7 @@ namespace Services.Core
                 questionTemplate.DateUpdated = DateTime.Now;
                 questionTemplate.Description = model.Description;
                 questionTemplate.Title = model.Title;
+                questionTemplate.QuestionTemplateTypeId = model.QuestionTemplateTypeId;
 
                 _dbContext.QuestionTemplates.FindOneAndReplace(f => f.Id == questionTemplate.Id, questionTemplate);
 

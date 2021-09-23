@@ -23,6 +23,7 @@ namespace CMS.Extensions
             services.AddScoped<IQuestionTemplateService, QuestionTemplateService>();
             services.AddScoped<ISurveyResultService, SurveyResultService>();
             services.AddScoped<ISurveySessionService, SurveySessionService>();
+            services.AddScoped<IQuestionTemplateTypeService, QuestionTemplateTypeService>();
         }
 
         public static void ConfigCors(this IServiceCollection services)

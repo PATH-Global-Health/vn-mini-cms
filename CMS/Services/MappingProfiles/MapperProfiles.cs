@@ -21,6 +21,11 @@ namespace Services.MappingProfiles
             CreateMap<Tag, TagUpdateModel>().ReverseMap();
             CreateMap<Tag, TagAddModel>().ReverseMap();
 
+            //QuestionTemplateType
+            CreateMap<QuestionTemplateType, QuestionTemplateTypeViewModel>().ReverseMap();
+            CreateMap<QuestionTemplateType, QuestionTemplateTypeUpdateModel>().ReverseMap();
+            CreateMap<QuestionTemplateType, QuestionTemplateTypeAddModel>().ReverseMap();
+
             //Part
             CreateMap<Part, PartViewModel>().ReverseMap();
             CreateMap<Part, PartAddModel>().ReverseMap();

@@ -27,6 +27,7 @@ namespace Data.DataAccess
         public IMongoCollection<Question> Questions => _db.GetCollection<Question>("questions");
         public IMongoCollection<SurveySession> SurveySessions => _db.GetCollection<SurveySession>("surveySessions");
         public IMongoCollection<FileData> FileData => _db.GetCollection<FileData>("fileData");
+        public IMongoCollection<QuestionTemplateType> QuestionTemplateTypes => _db.GetCollection<QuestionTemplateType>("questionTemplateTypes");
 
         public IClientSessionHandle StartSession()
         {
@@ -67,6 +68,11 @@ namespace Data.DataAccess
             if (!collectionNames.Any(name => name == "fileData"))
             {
                 _db.CreateCollection("fileData");
+            }
+
+            if (!collectionNames.Any(name => name == "questionTemplateTypes"))
+            {
+                _db.CreateCollection("questionTemplateTypes");
             }
         }
     }

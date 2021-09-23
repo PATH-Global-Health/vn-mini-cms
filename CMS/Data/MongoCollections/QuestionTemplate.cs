@@ -10,6 +10,7 @@ namespace Data.MongoCollections
         public string Title { get; set; }
         public List<Question> Questions { get; set; }
         public List<SurveyResult> SurveyResults { get; set; }
+        public Guid? QuestionTemplateTypeId { get; set; }
     }
 
     public class SurveyResult : BaseMongoCollection
@@ -18,4 +19,8 @@ namespace Data.MongoCollections
         public double ToScore { get; set; }
     }
 
+    public class QuestionTemplateType : BaseMongoCollection
+    {
+
+    }
 }
