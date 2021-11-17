@@ -45,6 +45,11 @@ namespace Services.Core
                     throw new Exception("Invalid id");
                 }
 
+                if (answer.IsDeleted)
+                {
+                    throw new Exception("The answer has been deleted");
+                }
+
                 result.Data = answer;
                 result.Succeed = true;
             }
