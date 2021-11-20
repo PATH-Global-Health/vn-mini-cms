@@ -35,6 +35,12 @@ namespace Services.Core
             {
                 var questions = _dbContext.Questions.Find(f => (id == null || f.Id == id) && f.IsDeleted == false).ToList();
 
+                foreach (var question in questions)
+                {
+                    var ans = question.Answers.FindAll(x => x.IsDeleted == false).ToList();
+                    question.Answers = ans;
+                }
+
                 result.Data = _mapper.Map<List<Question>, List<QuestionViewModel>>(questions);
                 result.Succeed = true;
             }

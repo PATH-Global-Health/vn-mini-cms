@@ -12,10 +12,10 @@ namespace Services.Core
 {
     public interface ICategoryService
     {
-        public ResultModel Get(Guid? id);
-        public ResultModel Add(CategoryAddModel model);
-        public ResultModel Update(Guid id, CategoryAddModel model);
-        public ResultModel Delete(Guid id);
+         ResultModel Get(Guid? id);
+         ResultModel Add(CategoryAddModel model);
+         ResultModel Update(Guid id, CategoryAddModel model);
+         ResultModel Delete(Guid id);
     }
     public class CategoryService : ICategoryService
     {
@@ -66,8 +66,8 @@ namespace Services.Core
         {
             var result = new ResultModel();
 
-            var transaction = _dbContext.StartSession();
-            transaction.StartTransaction();
+ //           var transaction = _dbContext.StartSession();
+ //           transaction.StartTransaction();
             try
             {
                 var category = _dbContext.Categories.Find(f => f.Id == id).FirstOrDefault();
@@ -79,7 +79,7 @@ namespace Services.Core
                 _dbContext.Categories.FindOneAndReplace(f => f.Id == id, category);
                 UpdateAllReferences(category);
 
-                transaction.CommitTransaction();
+ //               transaction.CommitTransaction();
 
                 result.Data = category.Id;
                 result.Succeed = true;
@@ -87,11 +87,11 @@ namespace Services.Core
             catch (Exception e)
             {
                 result.ErrorMessage = e.InnerException != null ? e.InnerException.Message : e.Message;
-                transaction.AbortTransaction();
+ //               transaction.AbortTransaction();
             }
             finally
             {
-                transaction.Dispose();
+ //               transaction.Dispose();
             }
             return result;
         }

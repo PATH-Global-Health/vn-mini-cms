@@ -66,8 +66,8 @@ namespace Services.Core
         {
             var result = new ResultModel();
 
-            var transaction = _dbContext.StartSession();
-            transaction.StartTransaction();
+//            var transaction = _dbContext.StartSession();
+//            transaction.StartTransaction();
             try
             {
                 var tag = _dbContext.Tags.Find(f => f.Id == id).FirstOrDefault();
@@ -79,7 +79,7 @@ namespace Services.Core
                 _dbContext.Tags.FindOneAndReplace(f => f.Id == id, tag);
                 UpdateAllReferences(tag);
 
-                transaction.CommitTransaction();
+  //              transaction.CommitTransaction();
 
                 result.Data = tag.Id;
                 result.Succeed = true;
@@ -87,11 +87,11 @@ namespace Services.Core
             catch (Exception e)
             {
                 result.ErrorMessage = e.InnerException != null ? e.InnerException.Message : e.Message;
-                transaction.AbortTransaction();
+  //              transaction.AbortTransaction();
             }
             finally
             {
-                transaction.Dispose();
+ //               transaction.Dispose();
             }
             return result;
         }
