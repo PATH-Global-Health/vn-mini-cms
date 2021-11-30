@@ -109,16 +109,24 @@ namespace Services.Core
                 var questionTemplate = _mapper.Map<QuestionTemplateAddModel, QuestionTemplate>(model);
 
                 //Get question and map survey result
-                var questions = _dbContext.Questions.Find(f => model.Questions.Contains(f.Id)).ToList();
-                var surveyResults = _mapper.Map<List<SurveyResultAddModel>, List<SurveyResult>>(model.SurveyResults);
+//                var questions = _dbContext.Questions.Find(f => model.Questions.Contains(f.Id)).ToList();
+                var questionOrders = new List<QuestionOrder>();
+                foreach (var ques in model.Questions)
+                {
+                    var qs = _dbContext.Questions.Find(x => x.Id == ques.QuestionId).FirstOrDefault();
+                    if(qs == null) throw new Exception("Invalid question Id");
 
-                questionTemplate.Questions = questions;
+                    var questionOrder = _mapper.Map<Question, QuestionOrder>(qs);
+                    questionOrder.Order = ques.Order;
+                    questionOrders.Add(questionOrder);
+                }
+                var surveyResults = _mapper.Map<List<SurveyResultAddModel>, List<SurveyResult>>(model.SurveyResults);
+                questionTemplate.Questions = questionOrders;
                 questionTemplate.SurveyResults = surveyResults;
                 questionTemplate.QuestionTemplateTypeId = model.QuestionTemplateTypeId;
 
                 //Insert
                 _dbContext.QuestionTemplates.InsertOne(questionTemplate);
-
                 result.Data = questionTemplate.Id;
                 result.Succeed = true;
             }
@@ -140,9 +148,21 @@ namespace Services.Core
                     throw new Exception("Invalid id");
                 }
 
-                var questions = _dbContext.Questions.Find(f => model.Questions.Contains(f.Id)).ToList();
 
-                questionTemplate.Questions = questions;
+
+ //               var questions = _dbContext.Questions.Find(f => model.Questions.Contains(f.Id)).ToList();
+
+                var questionOrders = new List<QuestionOrder>();
+                foreach (var ques in model.Questions)
+                {
+                    var qs = _dbContext.Questions.Find(x => x.Id == ques.QuestionId).FirstOrDefault();
+                    if (qs == null) throw new Exception("Invalid question Id");
+
+                    var questionOrder = _mapper.Map<Question, QuestionOrder>(qs);
+                    questionOrder.Order = ques.Order;
+                    questionOrders.Add(questionOrder);
+                }
+                questionTemplate.Questions = questionOrders;
                 questionTemplate.DateUpdated = DateTime.Now;
                 questionTemplate.Description = model.Description;
                 questionTemplate.Title = model.Title;
@@ -200,7 +220,8 @@ namespace Services.Core
                 var questions = _dbContext.Questions.Find(f => model.Questions.Contains(f.Id)).ToList();
 
                 questionTemplate.DateUpdated = DateTime.Now;
-                questionTemplate.Questions.AddRange(questions);
+                var questionsOrder = _mapper.Map<List<Question>, List<QuestionOrder>>(questions);
+                questionTemplate.Questions.AddRange(questionsOrder);
 
                 _dbContext.QuestionTemplates.FindOneAndReplace(f => f.Id == questionTemplate.Id, questionTemplate);
 

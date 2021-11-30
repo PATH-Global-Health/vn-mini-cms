@@ -8,7 +8,7 @@ namespace Data.MongoCollections
     public class QuestionTemplate : BaseMongoCollection
     {
         public string Title { get; set; }
-        public List<Question> Questions { get; set; }
+        public List<QuestionOrder> Questions { get; set; }
         public List<SurveyResult> SurveyResults { get; set; }
         public Guid? QuestionTemplateTypeId { get; set; }
     }
@@ -23,4 +23,10 @@ namespace Data.MongoCollections
     {
 
     }
+
+    public class QuestionOrder : Question
+    {
+        public int Order { get; set; }
+    }
+
 }
