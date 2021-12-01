@@ -19,4 +19,4 @@ RUN dotnet publish "CMS.csproj" -c Release -o /app/publish
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "Booking_Service_App.dll"]
+ENTRYPOINT ["dotnet", "CMS.dll"]
