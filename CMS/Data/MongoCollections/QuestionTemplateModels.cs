@@ -58,7 +58,8 @@ namespace Data.MongoCollections
     public class QuestionTemplateQuestionModel
     {
         public Guid Id { get; set; }
-        public List<Guid> Questions { get; set; }
+        public List<QuestionOrderAddModel> Questions { get; set; }
+
     }
 
     public class QuestionTemplateViewModel

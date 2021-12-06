@@ -85,7 +85,7 @@ namespace Services.Core
                 question.IsMultipleChoice = model.IsMultipleChoice;
 
                 _dbContext.Questions.FindOneAndReplace(f => f.Id == question.Id, question);
-                UpdateAllReferences(question);
+//                UpdateAllReferences(question);
 
                 result.Data = question.Id;
                 result.Succeed = true;

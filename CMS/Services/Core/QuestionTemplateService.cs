@@ -46,6 +46,20 @@ namespace Services.Core
                     throw new Exception("Invalid id");
                 }
 
+                var listQuestionOrder = new List<QuestionOrder>();
+                foreach (var qs in questionTemplate.Questions)
+                {
+                    var qstmp = _dbContext.Questions.Find(x => x.Id == qs.Id && x.IsDeleted == false).FirstOrDefault();
+                    if(qstmp == null) continue;
+                    var ans = qstmp.Answers.FindAll(x => x.IsDeleted == false);
+                    qstmp.Answers = ans;
+                    var qsOrder = _mapper.Map<Question,QuestionOrder>(qstmp);
+                    qsOrder.Order = qs.Order;
+                    listQuestionOrder.Add(qsOrder);
+                }
+                questionTemplate.Questions = listQuestionOrder;
+                _dbContext.QuestionTemplates.FindOneAndReplace(f => f.Id == questionTemplate.Id, questionTemplate);
+
                 result.Data = _mapper.Map<QuestionTemplate, QuestionTemplateViewModel>(questionTemplate);
                 result.Succeed = true;
             }
@@ -217,10 +231,19 @@ namespace Services.Core
                     throw new Exception("Invalid id");
                 }
 
-                var questions = _dbContext.Questions.Find(f => model.Questions.Contains(f.Id)).ToList();
+                var questionOrders = new List<QuestionOrder>();
+                foreach (var ques in model.Questions)
+                {
+                    var qs = _dbContext.Questions.Find(x => x.Id == ques.QuestionId).FirstOrDefault();
+                    if (qs == null) throw new Exception("Invalid question Id");
+
+                    var questionOrder = _mapper.Map<Question, QuestionOrder>(qs);
+                    questionOrder.Order = ques.Order;
+                    questionOrders.Add(questionOrder);
+                }
 
                 questionTemplate.DateUpdated = DateTime.Now;
-                var questionsOrder = _mapper.Map<List<Question>, List<QuestionOrder>>(questions);
+                var questionsOrder = questionOrders;
                 questionTemplate.Questions.AddRange(questionsOrder);
 
                 _dbContext.QuestionTemplates.FindOneAndReplace(f => f.Id == questionTemplate.Id, questionTemplate);
@@ -246,11 +269,10 @@ namespace Services.Core
                     throw new Exception("Invalid id");
                 }
 
-                var questions = questionTemplate.Questions.Where(f => model.Questions.Contains(f.Id)).ToList();
-
-                foreach (var item in questions)
+                foreach (var item in model.Questions)
                 {
-                    questionTemplate.Questions.Remove(item);
+                    var thisQues = questionTemplate.Questions.Find(x => x.Id == item.QuestionId);
+                    questionTemplate.Questions.Remove(thisQues);
                 }
 
                 questionTemplate.DateUpdated = DateTime.Now;
