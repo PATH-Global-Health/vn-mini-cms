@@ -6,13 +6,14 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
+using Data.Constant;
 
 namespace Services.Core
 {
     public interface ICategoryService
     {
-         ResultModel Get(Guid? id);
+         Task<ResultModel> Get(Guid? id);
          ResultModel Add(CategoryAddModel model);
          ResultModel Update(Guid id, CategoryAddModel model);
          ResultModel Delete(Guid id);
@@ -21,21 +22,35 @@ namespace Services.Core
     {
         private readonly AppDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly ICacheService _cache;
 
-        public CategoryService(AppDbContext dbContext, IMapper mapper)
+        public CategoryService(AppDbContext dbContext, IMapper mapper,ICacheService cache)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _cache = cache;
         }
 
-        public ResultModel Get(Guid? id)
+        public async Task<ResultModel> Get(Guid? id)
         {
             var result = new ResultModel();
             try
             {
-                var categories = _dbContext.Categories.Find(f => (id == null && f.IsDeleted == false) || f.Id == id).ToList();
-
-                result.Data = _mapper.Map<List<Category>, List<CategoryViewModel>>(categories);
+                var listCategory = new List<CategoryViewModel>();
+                listCategory = await _cache.GetCache<List<CategoryViewModel>>(RedisKey.CATELOGY_VIEW);
+                if (listCategory == null)
+                {
+                    var categories = _dbContext.Categories.Find(f =>!f.IsDeleted).ToList();
+                    listCategory= _mapper.Map<List<Category>, List<CategoryViewModel>>(categories);
+                    _cache.SetDefautCache(RedisKey.CATELOGY_VIEW,listCategory);
+                }
+                result.Data = listCategory;
+                if (id.HasValue)
+                {
+                    var category = listCategory.FirstOrDefault(x => x.Id == id);
+                    if (category == null) throw new Exception("CategoryId does not exist");
+                    result.Data = category;
+                }
                 result.Succeed = true;
             }
             catch (Exception e)
@@ -50,11 +65,10 @@ namespace Services.Core
             try
             {
                 var category = _mapper.Map<CategoryAddModel, Category>(model);
-
                 _dbContext.Categories.InsertOne(category);
-
                 result.Data = category.Id;
                 result.Succeed = true;
+                _cache.DeleteKey(RedisKey.CATELOGY_VIEW);
             }
             catch (Exception e)
             {
@@ -83,6 +97,7 @@ namespace Services.Core
 
                 result.Data = category.Id;
                 result.Succeed = true;
+                _cache.DeleteKey(RedisKey.CATELOGY_VIEW);
             }
             catch (Exception e)
             {
@@ -123,6 +138,7 @@ namespace Services.Core
 
                 result.Data = category.Id;
                 result.Succeed = true;
+                _cache.DeleteKey(RedisKey.CATELOGY_VIEW);
             }
             catch (Exception e)
             {

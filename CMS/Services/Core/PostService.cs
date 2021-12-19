@@ -7,14 +7,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using Data.Constant;
 using Tag = Data.MongoCollections.Tag;
 
 namespace Services.Core
 {
     public interface IPostService
     {
-        ResultModel Filter(string searchText, List<Guid> categories, List<Guid> tags, bool? orderByDescending, int pageIndex, int pageSize);
-        ResultModel Get(Guid id);
+        Task<ResultModel> Filter(string searchText, List<Guid> categories, List<Guid> tags, bool? orderByDescending, int pageIndex, int pageSize);
+
+        Task<ResultModel> Get(Guid id);
         ResultModel Add(PostAddModel model);
         ResultModel AddPartToPost(AddPartToPostModel model);
         ResultModel Update(Guid id, PostUpdateModel model);
@@ -24,25 +27,31 @@ namespace Services.Core
     {
         private readonly AppDbContext _dbContext;
         private readonly IMapper _mapper;
-
-        public PostService(AppDbContext dbContext, IMapper mapper)
+        private readonly ICacheService _cache;
+        public PostService(AppDbContext dbContext, IMapper mapper, ICacheService cache)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _cache = cache;
         }
 
-        public ResultModel Filter(string searchText, List<Guid> categories, List<Guid> tags, bool? orderByDescending, int pageIndex, int pageSize)
+        public async Task<ResultModel> Filter(string searchText, List<Guid> categories, List<Guid> tags, bool? orderByDescending, int pageIndex, int pageSize)
         {
             var result = new ResultModel();
             try
             {
-                var posts = _dbContext.Posts.Find(f => f.IsDeleted == false).ToList();
+                var posts = new List<Post>();
+                posts = await _cache.GetCache<List<Post>>(RedisKey.POST_VIEW);
 
+                if (posts == null)
+                {
+                    posts = _dbContext.Posts.Find(f => !f.IsDeleted).ToList();
+                    _cache.SetDefautCache(RedisKey.POST_VIEW, posts);
+                }
                 posts = posts.Where(s => string.IsNullOrEmpty(searchText) || s.Name.Contains(searchText))
                                 .Where(f => (categories.Count == 0 || categories.Intersect(f.Categories.Select(s => s.Id)).Any())
                                 && (tags.Count == 0 || tags.Intersect(f.Tags.Select(s => s.Id)).Any()))
                                 .ToList();
-
                 if (orderByDescending == true)
                 {
                     posts = posts.OrderByDescending(o => o.DateCreated).ToList();
@@ -68,14 +77,14 @@ namespace Services.Core
             }
             return result;
         }
-        public ResultModel Get(Guid id)
+        public async Task<ResultModel> Get(Guid id)
         {
             var result = new ResultModel();
             try
             {
-                var post = _dbContext.Posts.Find(f => f.Id == id).FirstOrDefault();
+                var posts = await _dbContext.Posts.FindAsync(x => x.Id == id);
+                var post = posts.FirstOrDefault();
                 if (post == null) throw new Exception("Invalid id");
-
                 result.Data = _mapper.Map<Post, PostViewModel>(post);
                 result.Succeed = true;
             }
@@ -111,6 +120,7 @@ namespace Services.Core
 
                 result.Data = post.Id;
                 result.Succeed = true;
+                _cache.DeleteKey(RedisKey.POST_VIEW);
             }
             catch (Exception e)
             {
@@ -134,6 +144,7 @@ namespace Services.Core
 
                 result.Data = post.Id;
                 result.Succeed = true;
+                _cache.DeleteKey(RedisKey.POST_VIEW);
             }
             catch (Exception e)
             {
@@ -174,6 +185,7 @@ namespace Services.Core
 
                 result.Data = post.Id;
                 result.Succeed = true;
+                _cache.DeleteKey(RedisKey.POST_VIEW);
             }
             catch (Exception e)
             {
@@ -195,6 +207,7 @@ namespace Services.Core
 
                 result.Data = post.Id;
                 result.Succeed = true;
+                _cache.DeleteKey(RedisKey.POST_VIEW);
             }
             catch (Exception e)
             {

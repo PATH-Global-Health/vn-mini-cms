@@ -21,9 +21,9 @@ namespace CMS.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get(Guid? id)
+        public async Task<IActionResult> GetAsync(Guid? id)
         {
-            var rs = _templateTypeService.Get(id);
+            var rs = await _templateTypeService.Get(id);
             if (rs.Succeed) return Ok(rs.Data);
             return BadRequest(rs.ErrorMessage);
         }

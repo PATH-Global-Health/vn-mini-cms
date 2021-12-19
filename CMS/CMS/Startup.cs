@@ -34,6 +34,12 @@ namespace CMS
             services.ConfigSwagger();
             services.AddBusinessServices();
             services.AddAutoMapper(typeof(MapperProfiles));
+
+            services.AddStackExchangeRedisCache(options =>
+            {
+                options.Configuration = Configuration["Redis:Connection"];
+                options.InstanceName = Configuration["Redis:Instance"];
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -21,17 +21,17 @@ namespace CMS.Controllers
         }
 
         [HttpGet("{id}")]
-        public IActionResult Get(Guid id)
+        public async Task<IActionResult> Get(Guid id)
         {
-            var rs = _postService.Get(id);
+            var rs = await _postService.Get(id);
             if (rs.Succeed) return Ok(rs.Data);
             return BadRequest(rs.ErrorMessage);
         }
 
         [HttpGet]
-        public IActionResult Filter(string searchText, [FromQuery] List<Guid> categories, [FromQuery] List<Guid> tags, bool? orderByCreatedDate, int? pageIndex = 0, int? pageSize = 10)
+        public async Task<IActionResult> Filter(string searchText, [FromQuery] List<Guid> categories, [FromQuery] List<Guid> tags, bool? orderByCreatedDate, int? pageIndex = 0, int? pageSize = 10)
         {
-            var rs = _postService.Filter(searchText, categories, tags, orderByCreatedDate, pageIndex.Value, pageSize.Value);
+            var rs = await _postService.Filter(searchText, categories, tags, orderByCreatedDate, pageIndex.Value, pageSize.Value);
             if (rs.Succeed) return Ok(rs.Data);
             return BadRequest(rs.ErrorMessage);
         }

@@ -24,6 +24,7 @@ namespace CMS.Extensions
             services.AddScoped<ISurveyResultService, SurveyResultService>();
             services.AddScoped<ISurveySessionService, SurveySessionService>();
             services.AddScoped<IQuestionTemplateTypeService, QuestionTemplateTypeService>();
+            services.AddSingleton<ICacheService, CacheService>();
         }
 
         public static void ConfigCors(this IServiceCollection services)

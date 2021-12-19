@@ -6,7 +6,6 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Services.Core
 {
@@ -27,7 +26,6 @@ namespace Services.Core
             _dbContext = dbContext;
             _mapper = mapper;
         }
-
         public ResultModel Get(Guid id)
         {
             var result = new ResultModel();

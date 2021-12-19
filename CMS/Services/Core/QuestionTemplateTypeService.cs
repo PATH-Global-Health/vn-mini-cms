@@ -5,13 +5,15 @@ using Data.ViewModels;
 using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
+using Data.Constant;
 
 namespace Services.Core
 {
     public interface IQuestionTemplateTypeService
     {
-        ResultModel Get(Guid? id);
+        Task<ResultModel> Get(Guid? id);
         ResultModel Add(QuestionTemplateTypeAddModel model);
         ResultModel Update(Guid id, QuestionTemplateTypeAddModel model);
         ResultModel Delete(Guid id);
@@ -20,21 +22,36 @@ namespace Services.Core
     {
         private readonly AppDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly ICacheService _cache;
 
-        public QuestionTemplateTypeService(AppDbContext dbContext, IMapper mapper)
+        public QuestionTemplateTypeService(AppDbContext dbContext, IMapper mapper, ICacheService cache)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _cache = cache;
         }
 
-        public ResultModel Get(Guid? id)
+        public async Task<ResultModel> Get(Guid? id)
         {
             var result = new ResultModel();
             try
             {
-                var types = _dbContext.QuestionTemplateTypes.Find(f => (id == null && f.IsDeleted == false) || f.Id == id).ToList();
+                var listType = new List<QuestionTemplateTypeViewModel>();
+                listType = await _cache.GetCache<List<QuestionTemplateTypeViewModel>>(RedisKey
+                    .QUESTION_TEMPLATE_TYPE_VIEW);
+                if (listType == null)
+                {
+                    var type = _dbContext.QuestionTemplateTypes.Find(f =>!f.IsDeleted).ToList();
+                    listType = _mapper.Map<List<QuestionTemplateType>, List<QuestionTemplateTypeViewModel>>(type);
+                    _cache.SetDefautCache(RedisKey.QUESTION_TEMPLATE_TYPE_VIEW, listType);
+                }
 
-                result.Data = _mapper.Map<List<QuestionTemplateType>, List<QuestionTemplateTypeViewModel>>(types);
+                result.Data = listType;
+                if (id.HasValue)
+                {
+                    result.Data = listType.FirstOrDefault(x => x.Id == id);
+                }
+
                 result.Succeed = true;
             }
             catch (Exception e)
@@ -54,6 +71,7 @@ namespace Services.Core
 
                 result.Data = type.Id;
                 result.Succeed = true;
+                _cache.DeleteKey(RedisKey.QUESTION_TEMPLATE_TYPE_VIEW);
             }
             catch (Exception e)
             {
@@ -76,6 +94,7 @@ namespace Services.Core
 
                 result.Data = tag.Id;
                 result.Succeed = true;
+                _cache.DeleteKey(RedisKey.QUESTION_TEMPLATE_TYPE_VIEW);
             }
             catch (Exception e)
             {
@@ -98,6 +117,7 @@ namespace Services.Core
 
                 result.Data = tag.Id;
                 result.Succeed = true;
+                _cache.DeleteKey(RedisKey.QUESTION_TEMPLATE_TYPE_VIEW);
             }
             catch (Exception e)
             {

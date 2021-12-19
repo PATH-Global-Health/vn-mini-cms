@@ -7,6 +7,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using Data.Constant;
 
 namespace Services.Core
 {
@@ -16,10 +18,9 @@ namespace Services.Core
         ResultModel Add(QuestionTemplateAddModel model);
         ResultModel Update(Guid id, QuestionTemplateUpdateModel model);
         ResultModel Delete(Guid id);
-        ResultModel Filter(string userId, int pageIndex, int pageSize);
+        Task<ResultModel> Filter(string userId, int pageIndex, int pageSize);
         ResultModel AddQuestion(QuestionTemplateQuestionModel model);
         ResultModel RemoveQuestion(QuestionTemplateQuestionModel model);
-
         ResultModel AddSurveyResult(QuestionTemplateSuveyResultAddModel model);
         ResultModel RemoveSurveyResult(QuestionTemplateSuveyResultDeleteModel model);
     }
@@ -27,11 +28,13 @@ namespace Services.Core
     {
         private readonly AppDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly ICacheService _cache;
 
-        public QuestionTemplateService(AppDbContext dbContext, IMapper mapper)
+        public QuestionTemplateService(AppDbContext dbContext, IMapper mapper, ICacheService cache)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _cache = cache;
         }
 
         public ResultModel Get(Guid id)
@@ -50,10 +53,10 @@ namespace Services.Core
                 foreach (var qs in questionTemplate.Questions)
                 {
                     var qstmp = _dbContext.Questions.Find(x => x.Id == qs.Id && x.IsDeleted == false).FirstOrDefault();
-                    if(qstmp == null) continue;
+                    if (qstmp == null) continue;
                     var ans = qstmp.Answers.FindAll(x => x.IsDeleted == false);
                     qstmp.Answers = ans;
-                    var qsOrder = _mapper.Map<Question,QuestionOrder>(qstmp);
+                    var qsOrder = _mapper.Map<Question, QuestionOrder>(qstmp);
                     qsOrder.Order = qs.Order;
                     listQuestionOrder.Add(qsOrder);
                 }
@@ -69,21 +72,15 @@ namespace Services.Core
             }
             return result;
         }
-        public ResultModel Filter(string userId, int pageIndex, int pageSize)
+        public async Task<ResultModel> Filter(string userId, int pageIndex, int pageSize)
         {
             var result = new ResultModel();
             try
             {
-                var questionTemplate = _dbContext.QuestionTemplates.Find(f => f.IsDeleted == false).ToList();
-
+                var questionDB = await _dbContext.QuestionTemplates.FindAsync(f => !f.IsDeleted);
+                var questionTemplate = questionDB.ToList();
                 questionTemplate = questionTemplate.OrderByDescending(o => o.DateCreated).ToList();
-
-                if (questionTemplate == null)
-                {
-                    throw new Exception("Invalid id");
-                }
-                var paging = questionTemplate.Skip((pageIndex - 1) * pageSize).Take(pageSize).ToList();
-
+                var paging = questionTemplate.Skip((pageIndex - 1) * pageSize).Take(pageSize);
                 var data = new List<QuestionTemplateUserModel>();
 
                 foreach (var item in paging)
@@ -94,7 +91,6 @@ namespace Services.Core
                     {
                         dataItem.IsCompleted = _dbContext.SurveySessions.Find(f => f.UserId == userId && f.QuestionTemplateId == item.Id).Any();
                     }
-
                     data.Add(dataItem);
                 }
 
@@ -123,12 +119,12 @@ namespace Services.Core
                 var questionTemplate = _mapper.Map<QuestionTemplateAddModel, QuestionTemplate>(model);
 
                 //Get question and map survey result
-//                var questions = _dbContext.Questions.Find(f => model.Questions.Contains(f.Id)).ToList();
+                //                var questions = _dbContext.Questions.Find(f => model.Questions.Contains(f.Id)).ToList();
                 var questionOrders = new List<QuestionOrder>();
                 foreach (var ques in model.Questions)
                 {
                     var qs = _dbContext.Questions.Find(x => x.Id == ques.QuestionId).FirstOrDefault();
-                    if(qs == null) throw new Exception("Invalid question Id");
+                    if (qs == null) throw new Exception("Invalid question Id");
 
                     var questionOrder = _mapper.Map<Question, QuestionOrder>(qs);
                     questionOrder.Order = ques.Order;
@@ -164,7 +160,7 @@ namespace Services.Core
 
 
 
- //               var questions = _dbContext.Questions.Find(f => model.Questions.Contains(f.Id)).ToList();
+                //               var questions = _dbContext.Questions.Find(f => model.Questions.Contains(f.Id)).ToList();
 
                 var questionOrders = new List<QuestionOrder>();
                 foreach (var ques in model.Questions)

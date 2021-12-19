@@ -7,12 +7,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using Data.Constant;
 
 namespace Services.Core
 {
     public interface ITagService
     {
-        ResultModel Get(Guid? id);
+        Task<ResultModel> GetAsync(Guid? id);
         ResultModel Add(TagAddModel model);
         ResultModel Update(Guid id, TagAddModel model);
         ResultModel Delete(Guid id);
@@ -21,21 +23,37 @@ namespace Services.Core
     {
         private readonly AppDbContext _dbContext;
         private readonly IMapper _mapper;
+        private readonly ICacheService _cache;
 
-        public TagService(AppDbContext dbContext, IMapper mapper)
+        public TagService(AppDbContext dbContext, IMapper mapper, ICacheService cache)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _cache = cache;
         }
 
-        public ResultModel Get(Guid? id)
+        public async Task<ResultModel> GetAsync(Guid? id)
         {
             var result = new ResultModel();
             try
             {
-                var tags = _dbContext.Tags.Find(f => (id == null && f.IsDeleted == false) || f.Id == id).ToList();
+                var listTag = new List<TagViewModel>();
+                    listTag = await _cache.GetCache<List<TagViewModel>>(RedisKey.TAGS_VIEW);
+                if (listTag == null)
+                {
+                    var tags = _dbContext.Tags.Find(f => (id == null && f.IsDeleted == false) || f.Id == id).ToList();
+                    listTag = _mapper.Map<List<Data.MongoCollections.Tag>, List<TagViewModel>>(tags);
+                    _cache.SetDefautCache(RedisKey.TAGS_VIEW,listTag);
+                }
 
-                result.Data = _mapper.Map<List<Data.MongoCollections.Tag>, List<TagViewModel>>(tags);
+                result.Data = listTag;
+                if (id.HasValue)
+                {
+                   var tag = listTag.FirstOrDefault(x => x.Id == id);
+                   if(tag == null) throw new Exception("TagId does not exist");
+                   result.Data = tag;
+                }
+
                 result.Succeed = true;
             }
             catch (Exception e)
@@ -55,6 +73,7 @@ namespace Services.Core
 
                 result.Data = tag.Id;
                 result.Succeed = true;
+                _cache.DeleteKey(RedisKey.TAGS_VIEW);
             }
             catch (Exception e)
             {
@@ -83,6 +102,7 @@ namespace Services.Core
 
                 result.Data = tag.Id;
                 result.Succeed = true;
+                _cache.DeleteKey(RedisKey.TAGS_VIEW);
             }
             catch (Exception e)
             {
@@ -123,6 +143,7 @@ namespace Services.Core
 
                 result.Data = tag.Id;
                 result.Succeed = true;
+                _cache.DeleteKey(RedisKey.TAGS_VIEW);
             }
             catch (Exception e)
             {

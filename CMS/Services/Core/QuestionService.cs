@@ -6,42 +6,57 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading.Tasks;
+using Data.Constant;
+
 
 namespace Services.Core
 {
     public interface IQuestionService
     {
-        ResultModel Get(Guid? id);
+        Task<ResultModel> Get(Guid? id);
         ResultModel Add(QuestionAddModel model);
         ResultModel Update(Guid id, QuestionUpdateModel model);
         ResultModel Delete(Guid id);
+        
     }
     public class QuestionService : IQuestionService
     {
         private readonly AppDbContext _dbContext;
         private readonly IMapper _mapper;
-
-        public QuestionService(AppDbContext dbContext, IMapper mapper)
+        private readonly ICacheService _cache;
+        public QuestionService(AppDbContext dbContext, IMapper mapper,ICacheService cache)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _cache = cache;
         }
 
-        public ResultModel Get(Guid? id)
+        public async Task<ResultModel> Get(Guid? id)
         {
             var result = new ResultModel();
             try
             {
-                var questions = _dbContext.Questions.Find(f => (id == null || f.Id == id) && f.IsDeleted == false).ToList();
-
-                foreach (var question in questions)
+                var listQuestionView = new List<QuestionViewModel>();
+                listQuestionView = await _cache.GetCache<List<QuestionViewModel>>(RedisKey.QUESTION_VIEW);
+                if (listQuestionView == null)
                 {
-                    var ans = question.Answers.FindAll(x => x.IsDeleted == false).ToList();
-                    question.Answers = ans;
+                    var questions = _dbContext.Questions.Find(f =>!f.IsDeleted ).ToList();
+                    foreach (var question in questions)
+                    {
+                        var ans = question.Answers.FindAll(x => x.IsDeleted == false).ToList();
+                        question.Answers = ans;
+                    }
+                    listQuestionView = _mapper.Map<List<Question>, List<QuestionViewModel>>(questions);
+                    _cache.SetDefautCache(RedisKey.QUESTION_VIEW, listQuestionView);
                 }
-
-                result.Data = _mapper.Map<List<Question>, List<QuestionViewModel>>(questions);
+                result.Data = listQuestionView;
+                if (id.HasValue)
+                {
+                    var question =listQuestionView.FirstOrDefault(x => x.Id == id);
+                    if(question == null) throw new Exception("QuestionId does not exist");
+                    result.Data = question;
+                }
                 result.Succeed = true;
             }
             catch (Exception e)
@@ -63,6 +78,8 @@ namespace Services.Core
 
                 result.Data = question.Id;
                 result.Succeed = true;
+
+                _cache.DeleteKey(RedisKey.QUESTION_VIEW);
             }
             catch (Exception e)
             {
@@ -89,6 +106,7 @@ namespace Services.Core
 
                 result.Data = question.Id;
                 result.Succeed = true;
+                _cache.DeleteKey(RedisKey.QUESTION_VIEW);
             }
             catch (Exception e)
             {
@@ -113,6 +131,7 @@ namespace Services.Core
 
                 result.Data = question.Id;
                 result.Succeed = true;
+                _cache.DeleteKey(RedisKey.QUESTION_VIEW);
             }
             catch (Exception e)
             {

@@ -29,9 +29,9 @@ namespace CMS.Controllers
         }
 
         [HttpGet("Filter")]
-        public IActionResult Filter(string userId, int? pageIndex = 1, int? pageSize = 10)
+        public async Task<IActionResult> Filter(string userId, int? pageIndex = 1, int? pageSize = 10)
         {
-            var rs = _questionTemplateService.Filter(userId, pageIndex.Value, pageSize.Value);
+            var rs = await _questionTemplateService.Filter(userId, pageIndex.Value, pageSize.Value);
             if (rs.Succeed) return Ok(rs.Data);
             return BadRequest(rs.ErrorMessage);
         }

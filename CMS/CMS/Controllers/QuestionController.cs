@@ -21,12 +21,13 @@ namespace CMS.Controllers
         }
 
         [HttpGet]
-        public IActionResult Get(Guid? id)
+        public async Task<IActionResult> Get(Guid? id)
         {
-            var rs = _questionService.Get(id);
+            var rs = await _questionService.Get(id);
             if (rs.Succeed) return Ok(rs.Data);
             return BadRequest(rs.ErrorMessage);
         }
+
 
         [HttpPost]
         public IActionResult Add(QuestionAddModel model)
