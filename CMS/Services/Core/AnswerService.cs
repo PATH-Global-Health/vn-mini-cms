@@ -9,19 +9,19 @@ using System.Linq;
 
 namespace Services.Core
 {
-    public interface IAnserService
+    public interface IAnswerService
     {
         ResultModel Get(Guid id);
         ResultModel Add(QuestionAddAnswerModel model);
         ResultModel Update(Guid id, AnswerAddModel model);
         ResultModel Delete(Guid id);
     }
-    public class AnserService : IAnserService
+    public class AnswerService : IAnswerService
     {
         private readonly AppDbContext _dbContext;
         private readonly IMapper _mapper;
 
-        public AnserService(AppDbContext dbContext, IMapper mapper)
+        public AnswerService(AppDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _mapper = mapper;

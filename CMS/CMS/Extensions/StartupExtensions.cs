@@ -18,7 +18,7 @@ namespace CMS.Extensions
             services.AddScoped<IPostService, PostService>();
             services.AddScoped<IPartService, PartService>();
             services.AddScoped<IQuestionService, QuestionService>();
-            services.AddScoped<IAnserService, AnserService>();
+            services.AddScoped<IAnswerService, AnswerService>();
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<IQuestionTemplateService, QuestionTemplateService>();
             services.AddScoped<ISurveyResultService, SurveyResultService>();
