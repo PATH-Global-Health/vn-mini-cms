@@ -6,28 +6,25 @@ using MongoDB.Driver;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Data.Constant;
 
 namespace Services.Core
 {
-    public interface IAnserService
+    public interface IAnswerService
     {
         ResultModel Get(Guid id);
         ResultModel Add(QuestionAddAnswerModel model);
         ResultModel Update(Guid id, AnswerAddModel model);
         ResultModel Delete(Guid id);
     }
-    public class AnserService : IAnserService
+    public class AnswerService : IAnswerService
     {
         private readonly AppDbContext _dbContext;
         private readonly IMapper _mapper;
-        private readonly ICacheService _cache;
 
-        public AnserService(AppDbContext dbContext, IMapper mapper,ICacheService cache)
+        public AnswerService(AppDbContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _mapper = mapper;
-            _cache = cache;
         }
         public ResultModel Get(Guid id)
         {
@@ -78,7 +75,6 @@ namespace Services.Core
 
                 result.Data = question.Id;
                 result.Succeed = true;
-                _cache.DeleteKey(RedisKey.QUESTION_VIEW);
             }
             catch (Exception e)
             {
@@ -114,7 +110,6 @@ namespace Services.Core
 
                 result.Data = answer.Id;
                 result.Succeed = true;
-                _cache.DeleteKey(RedisKey.QUESTION_VIEW);
             }
             catch (Exception e)
             {
@@ -149,7 +144,6 @@ namespace Services.Core
 
                 result.Data = answer.Id;
                 result.Succeed = true;
-                _cache.DeleteKey(RedisKey.QUESTION_VIEW);
             }
             catch (Exception e)
             {

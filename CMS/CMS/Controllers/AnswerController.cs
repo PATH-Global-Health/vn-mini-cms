@@ -13,9 +13,9 @@ namespace CMS.Controllers
     [ApiController]
     public class AnswerController : ControllerBase
     {
-        private readonly IAnserService _answerService;
+        private readonly IAnswerService _answerService;
 
-        public AnswerController(IAnserService answerService)
+        public AnswerController(IAnswerService answerService)
         {
             _answerService = answerService;
         }
