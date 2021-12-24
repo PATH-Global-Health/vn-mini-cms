@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CMS.Controllers
 {
@@ -29,6 +30,7 @@ namespace CMS.Controllers
         }
 
         [HttpPut]
+        [Authorize]
         public IActionResult Add(SurveyResultViewModel model)
         {
             var rs = _surveyResultService.Update(model);

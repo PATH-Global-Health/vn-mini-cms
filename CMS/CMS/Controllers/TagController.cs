@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CMS.Controllers
 {
@@ -29,6 +30,7 @@ namespace CMS.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Add(TagAddModel model)
         {
             var rs = _tagService.Add(model);
@@ -37,6 +39,7 @@ namespace CMS.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public IActionResult Update(Guid id, [FromBody] TagAddModel model)
         {
             var rs = _tagService.Update(id, model);
@@ -45,6 +48,7 @@ namespace CMS.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public IActionResult Delete(Guid id)
         {
             var rs = _tagService.Delete(id);

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CMS.Controllers
 {
@@ -37,6 +38,7 @@ namespace CMS.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Add(PostAddModel model)
         {
             var rs = _postService.Add(model);
@@ -45,6 +47,7 @@ namespace CMS.Controllers
         }
 
         [HttpPost("Parts")]
+        [Authorize]
         public IActionResult AddParts(AddPartToPostModel model)
         {
             var rs = _postService.AddPartToPost(model);
@@ -53,6 +56,7 @@ namespace CMS.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public IActionResult Update(Guid id, PostUpdateModel model)
         {
             var rs = _postService.Update(id, model);
@@ -61,6 +65,7 @@ namespace CMS.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize]
         public IActionResult Delete(Guid id)
         {
             var rs = _postService.Delete(id);

@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CMS.Controllers
 {
@@ -29,6 +30,7 @@ namespace CMS.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult Add(SurveySessionAddModel model)
         {
             var rs = _surveySessionService.Add(model);
@@ -37,6 +39,7 @@ namespace CMS.Controllers
         }
 
         [HttpGet("UserChecked/{userId}/{templateId}")]
+        [Authorize]
         public IActionResult UserChecked(string userId, Guid templateId)
         {
             var rs = _surveySessionService.UserChecked(userId, templateId);
@@ -45,6 +48,7 @@ namespace CMS.Controllers
         }
 
         [HttpGet("Hisories/{userId}")]
+        [Authorize]
         public IActionResult Hisories(string userId)
         {
             var rs = _surveySessionService.GetByUser(userId);
