@@ -38,7 +38,7 @@ namespace CMS
             services.ConfigSwagger();
             services.AddBusinessServices();
             services.AddAutoMapper(typeof(MapperProfiles));
-
+            services.ConfigJwt(Configuration["JwtSecretKey"], Configuration["JwtIssuerOptions:Issuer"], Configuration["JwtIssuerOptions:Audience"]);
             services.AddStackExchangeRedisCache(options =>
             {
                 options.Configuration = Configuration["Redis:Connection"];

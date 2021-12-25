@@ -1,12 +1,9 @@
 ﻿using Data.ViewModels;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Services.Core;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
+
 
 namespace CMS.Controllers
 {
@@ -30,7 +27,7 @@ namespace CMS.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult Add(QuestionAddAnswerModel model)
         {
             var rs = _answerService.Add(model);
@@ -39,7 +36,7 @@ namespace CMS.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult Update(Guid id, [FromBody] AnswerAddModel model)
         {
             var rs = _answerService.Update(id, model);
@@ -48,7 +45,7 @@ namespace CMS.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult Delete(Guid id)
         {
             var rs = _answerService.Delete(id);

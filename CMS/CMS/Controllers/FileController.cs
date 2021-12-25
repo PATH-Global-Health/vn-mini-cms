@@ -44,7 +44,7 @@ namespace CMS.Controllers
             return BadRequest(rs.ErrorMessage);
         }
 
-        [HttpPost]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> Add([FromForm] FileAddModel model)
         {
             var rs = await _fileService.Add(model);
@@ -52,7 +52,7 @@ namespace CMS.Controllers
             return BadRequest(rs.ErrorMessage);
         }
 
-        [HttpPut]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> Update([FromForm] FileUpdateModel model)
         {
             var rs = await _fileService.Update(model);
@@ -61,6 +61,7 @@ namespace CMS.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult Delete(Guid id)
         {
             var rs = _fileService.Delete(id);

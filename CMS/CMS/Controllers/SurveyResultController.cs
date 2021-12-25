@@ -30,7 +30,7 @@ namespace CMS.Controllers
         }
 
         [HttpPut]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult Add(SurveyResultViewModel model)
         {
             var rs = _surveyResultService.Update(model);

@@ -38,7 +38,7 @@ namespace CMS.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult Add(QuestionTemplateAddModel model)
         {
             var rs = _questionTemplateService.Add(model);
@@ -47,7 +47,7 @@ namespace CMS.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult Update(Guid id, [FromBody] QuestionTemplateUpdateModel model)
         {
             var rs = _questionTemplateService.Update(id, model);
@@ -56,7 +56,7 @@ namespace CMS.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult Delete(Guid id)
         {
             var rs = _questionTemplateService.Delete(id);
@@ -65,7 +65,7 @@ namespace CMS.Controllers
         }
 
         [HttpPut("Questions")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult AddQuestion(QuestionTemplateQuestionModel model)
         {
             var rs = _questionTemplateService.AddQuestion(model);
@@ -74,7 +74,7 @@ namespace CMS.Controllers
         }
 
         [HttpDelete("Questions")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult RemoveQuestion(QuestionTemplateQuestionModel model)
         {
             var rs = _questionTemplateService.RemoveQuestion(model);
@@ -83,7 +83,7 @@ namespace CMS.Controllers
         }
 
         [HttpPut("SurveyResult")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult AddSurveyResult(QuestionTemplateSuveyResultAddModel model)
         {
             var rs = _questionTemplateService.AddSurveyResult(model);
@@ -92,7 +92,7 @@ namespace CMS.Controllers
         }
 
         [HttpDelete("SurveyResult")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult RemoveSurveyResult(QuestionTemplateSuveyResultDeleteModel model)
         {
             var rs = _questionTemplateService.RemoveSurveyResult(model);

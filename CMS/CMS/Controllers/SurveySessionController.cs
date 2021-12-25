@@ -30,7 +30,7 @@ namespace CMS.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult Add(SurveySessionAddModel model)
         {
             var rs = _surveySessionService.Add(model);
@@ -39,7 +39,7 @@ namespace CMS.Controllers
         }
 
         [HttpGet("UserChecked/{userId}/{templateId}")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult UserChecked(string userId, Guid templateId)
         {
             var rs = _surveySessionService.UserChecked(userId, templateId);
@@ -48,7 +48,7 @@ namespace CMS.Controllers
         }
 
         [HttpGet("Hisories/{userId}")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult Hisories(string userId)
         {
             var rs = _surveySessionService.GetByUser(userId);

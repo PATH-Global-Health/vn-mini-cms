@@ -22,7 +22,7 @@ namespace CMS.Controllers
         }
 
         [HttpGet("{postId}")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult Get(Guid postId)
         {
             var rs = _partService.GetByPost(postId);
@@ -31,7 +31,7 @@ namespace CMS.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult Update(Guid id, PartUpdateModel model)
         {
             var rs = _partService.Update(id, model);
@@ -40,7 +40,7 @@ namespace CMS.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult Delete(Guid id)
         {
             var rs = _partService.Delete(id);

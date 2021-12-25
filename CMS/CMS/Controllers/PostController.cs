@@ -38,7 +38,7 @@ namespace CMS.Controllers
         }
 
         [HttpPost]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult Add(PostAddModel model)
         {
             var rs = _postService.Add(model);
@@ -47,7 +47,7 @@ namespace CMS.Controllers
         }
 
         [HttpPost("Parts")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult AddParts(AddPartToPostModel model)
         {
             var rs = _postService.AddPartToPost(model);
@@ -56,7 +56,7 @@ namespace CMS.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult Update(Guid id, PostUpdateModel model)
         {
             var rs = _postService.Update(id, model);
@@ -65,7 +65,7 @@ namespace CMS.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult Delete(Guid id)
         {
             var rs = _postService.Delete(id);

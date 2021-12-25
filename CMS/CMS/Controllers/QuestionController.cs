@@ -31,7 +31,7 @@ namespace CMS.Controllers
 
 
         [HttpPost]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult Add(QuestionAddModel model)
         {
             var rs = _questionService.Add(model);
@@ -40,7 +40,7 @@ namespace CMS.Controllers
         }
 
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult Update(Guid id, [FromBody] QuestionUpdateModel model)
         {
             var rs = _questionService.Update(id, model);
@@ -49,7 +49,7 @@ namespace CMS.Controllers
         }
 
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(AuthenticationSchemes = "Bearer")]
         public IActionResult Delete(Guid id)
         {
             var rs = _questionService.Delete(id);
