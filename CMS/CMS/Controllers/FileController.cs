@@ -44,6 +44,7 @@ namespace CMS.Controllers
             return BadRequest(rs.ErrorMessage);
         }
 
+        [HttpPost]
         [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> Add([FromForm] FileAddModel model)
         {
@@ -51,7 +52,7 @@ namespace CMS.Controllers
             if (rs.Succeed) return Ok(rs.Data);
             return BadRequest(rs.ErrorMessage);
         }
-
+        [HttpPut]
         [Authorize(AuthenticationSchemes = "Bearer")]
         public async Task<IActionResult> Update([FromForm] FileUpdateModel model)
         {
